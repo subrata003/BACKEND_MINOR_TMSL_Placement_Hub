@@ -3,6 +3,7 @@ import cors from 'cors';
 import { configDotenv } from 'dotenv';
 import userRoute from './src/routes/user/user.route.js';
 import { connectDB } from './src/config/db.js';
+import jobRouter from './src/routes/admin/job.router.js';
 
 const app=express();
 configDotenv(); //load .env file
@@ -16,6 +17,7 @@ connectDB();
 
 //api
 app.use('/api/user',userRoute);
+app.use('/api/admin',jobRouter)
 
 app.get('/',(req,res)=>{
  res.send('Hello World');
