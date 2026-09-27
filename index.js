@@ -4,6 +4,10 @@ import { configDotenv } from 'dotenv';
 import userRoute from './src/routes/user/user.route.js';
 import { connectDB } from './src/config/db.js';
 
+import jobRouter from './src/routes/admin/jobManagement/job.router.js';
+
+
+
 const app=express();
 configDotenv(); //load .env file
 const port=process.env.PORT || 3000;
