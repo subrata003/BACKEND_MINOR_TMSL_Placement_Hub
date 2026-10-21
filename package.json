@@ -1,6 +1,7 @@
 {
   "name": "backend_minor_tmsl_placement_hub",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,6 +21,7 @@
   "homepage": "https://github.com/subrata003/BACKEND_MINOR_TMSL_Placement_Hub#readme",
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.11.0",
     "cors": "^2.8.6",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
