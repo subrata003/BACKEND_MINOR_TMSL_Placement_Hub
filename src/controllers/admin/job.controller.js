@@ -69,6 +69,7 @@ export const createJob = async (req, res) => {
       error: error.message,
     });
   }
+
 };
 export const updateJob = async (req, res) => {
   try {
@@ -251,3 +252,4 @@ export const getAlljob = async (req, res) => {
 
  }
 }
+
