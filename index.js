@@ -4,7 +4,7 @@ import dns from "dns";
 import { configDotenv } from 'dotenv';
 import userRoute from './src/routes/user/user.route.js';
 import { connectDB } from './src/config/db.js';
-import jobRouter from './src/routes/admin/job.router.js';
+
 
 
 const app=express();
@@ -22,6 +22,8 @@ connectDB();
 // import routes
 
 import studentRouter from "./src/routes/student/student.route.js"
+import jobApply from "./src/routes/jobApplication/jobApplication.route.js"
+import jobRouter from './src/routes/admin/job.route.js';
 
 //api
 app.use('/api/user',userRoute);
@@ -30,6 +32,7 @@ app.use('/api/admin',jobRouter)
 // routes declearation
 
 app.use("/api/students",studentRouter);
+app.use("/api/job", jobApply)
 
 app.get('/',(req,res)=>{
  res.send('Hello World');

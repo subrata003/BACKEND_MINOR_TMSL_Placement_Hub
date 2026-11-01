@@ -9,7 +9,7 @@ import ChcekEligibility from "../../utils/ChcekEligibility.js";
 
 const createProfile = asyncHandler(async (req, res) => {
 
-    // console.log("===== CREATE PROFILE =====");
+  
     const userId = req.user?._id;
     //    console.log("User ID:", userId);
     const existingStudent = await Student.findOne({ userId })
@@ -175,15 +175,14 @@ const {
 })
 
 
-const updateProfile = asyncHandler(async (req, res) => {
 
+const updateProfile = asyncHandler(async (req, res) => {
     const userId = req.user._id;
 
     const student = await Student.findOne({ userId });
 
     if (!student) {
-
-        throw new ApiError(404, " Student profile not found")
+        throw new ApiError(404, "Student profile not found");
     }
 
     const {
@@ -197,34 +196,31 @@ const updateProfile = asyncHandler(async (req, res) => {
         activeBacklogs
     } = req.body;
 
-  const resumeFile = req.file?.path;
+    const resumeFile = req.file?.path;
     const oldResume = student.resume;
-  
-    
 
     let newResume = null;
 
-if (resumeFile) {
-
-    const uploadResult = await uploadOnCloudinary(
-        resumeFile,
-        "raw"
-    );
-
-    if (!uploadResult) {
-        throw new ApiError(
-            500,
-            "Failed to upload new resume"
+    // Upload new resume if provided
+    if (resumeFile) {
+        const uploadResult = await uploadOnCloudinary(
+            resumeFile,
+            "raw"
         );
+
+        if (!uploadResult) {
+            throw new ApiError(
+                500,
+                "Failed to upload new resume"
+            );
+        }
+
+        newResume = {
+            url: uploadResult.secure_url,
+            publicId: uploadResult.public_id
+        };
     }
 
-    newResume = {
-        url: uploadResult.secure_url,
-        publicId: uploadResult.public_id
-    };
-}
-
-    // Prepare database update
     const updateData = {
         email,
         rollNumber,
@@ -236,60 +232,73 @@ if (resumeFile) {
         activeBacklogs
     };
 
-    // Only replace resume if new resume was uploaded
+    // Replace resume only when a new resume is uploaded
     if (newResume) {
-
         updateData.resume = newResume;
     }
 
+    try {
+        // 1. Update email in User model
+        if (email !== undefined) {
+            const updatedUser = await userModal.findByIdAndUpdate(
+                userId,
+                { $set: { email } },
+                {
+                    new: true,
+                    runValidators: true
+                }
+            );
 
-
-    const updatedStudent = await Student.findOneAndUpdate({ userId },
-        { $set: updateData },
-        {
-            new: true,
-            runValidators: true
+            if (!updatedUser) {
+                throw new ApiError(404, "User not found");
+            }
         }
-    );
 
-    // if DB update failed
+        // 2. Update Student model
+        const updatedStudent = await Student.findOneAndUpdate(
+            { userId },
+            { $set: updateData },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
 
-    if (!updatedStudent) {
+        if (!updatedStudent) {
+            throw new ApiError(
+                500,
+                "Failed to update student profile"
+            );
+        }
 
-        if (newResume) {
+        // 3. Delete old resume after successful update
+        if (newResume && oldResume?.publicId) {
             await deleteFromeCloudinary(
-                newResume.publicId,
-               "raw"
-            )
+                oldResume.publicId,
+                "raw"
+            );
         }
 
-        throw new ApiError(500, "Failed to update student profile");
-    }
-
-    // delete old resume
-    if (newResume && oldResume) {
-
-        await deleteFromeCloudinary(
-            oldResume.publicId,
-            "raw"
-        )
-
-
-    };
-
-    return res
-        .status(200)
-        .json(
+        return res.status(200).json(
             new ApiResponse(
                 200,
                 updatedStudent,
                 "Student profile updated successfully"
             )
-        )
+        );
+    } catch (error) {
+        // Clean up newly uploaded resume if the update fails
+        if (newResume?.publicId) {
+            await deleteFromeCloudinary(
+                newResume.publicId,
+                "raw"
+            );
+        }
 
+        throw error;
+    }
+});
 
-
-})
 
 
 const getProfile=asyncHandler(async(req,res)=>{
