@@ -1,4 +1,7 @@
 import Job from "../../models/admin/Job.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { ApiResponse } from "../../utils/ApiResponse.js";
 
 
 export const createJob = async (req, res) => {
@@ -12,6 +15,7 @@ export const createJob = async (req, res) => {
       location,
       workMode,
       salary,
+      passingYear,
       package: jobPackage,
       eligibility,
       applicationStartDate,
@@ -43,6 +47,7 @@ export const createJob = async (req, res) => {
       location,
       workMode,
       salary,
+      passingYear,
       package: jobPackage,
       eligibility,
       applicationStartDate,
@@ -83,6 +88,7 @@ export const updateJob = async (req, res) => {
       location,
       workMode,
       salary,
+      passingYear,
       package: jobPackage,
       eligibility,
       applicationStartDate,
@@ -101,6 +107,7 @@ export const updateJob = async (req, res) => {
         location,
         workMode,
         salary,
+        passingYear,
         package: jobPackage,
         eligibility,
         applicationStartDate,
@@ -172,7 +179,7 @@ export const deleteJob = async (req, res) => {
   }
 }
 
-//handle application deadline
+//handle application deadline 
 export const applyJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -222,6 +229,7 @@ export const applyJob = async (req, res) => {
   }
 };
 
+// subrata 
 export const jobDetails=async(req,res)=>{
   try {
     const {id}=req.params;
@@ -243,13 +251,8 @@ export const jobDetails=async(req,res)=>{
     
   }
 }
-export const getAlljob = async (req, res) => {
- try {
-  const job = await Job.find();
-  res.status(200).json({ success: true, message: "job get successfully", data: job })
- } catch (error) {
-  res.status(500).json({ success: false, message: "Internal server error" })
 
- }
-}
+
+
+
 

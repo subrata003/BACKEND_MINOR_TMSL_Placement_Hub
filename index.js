@@ -1,9 +1,11 @@
 
 import express from 'express';
 import cors from 'cors';
+import dns from "dns";
 import { configDotenv } from 'dotenv';
 import userRoute from './src/routes/user/user.route.js';
 import { connectDB } from './src/config/db.js';
+
 import jobRouter from './src/routes/admin/job.router.js';
 // import applicationRoutes from "./routes/admin/applicationRoutes.js";
 // import studentApplicationRoutes from "./routes/student/applicationRoutes.js";
@@ -11,6 +13,15 @@ import jobRouter from './src/routes/admin/job.router.js';
 import ApplyRouterAdmin from './src/routes/admin/applicationRoutes.js';
 import ApplyRouterStudent from './src/routes/student/applicationController.js';
 import studentDataRouter from './src/routes/student/studentRoutes.js';
+
+
+
+
+
+// const app=express();
+// dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// configDotenv(); //load .env file
+// const port=process.env.PORT || 3000;
 
 
 import userRoute from "./src/routes/user/user.route.js";
@@ -35,9 +46,30 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // Routes
 app.use("/api/user", userRoute);
 app.use("/api/admin/job", jobRouter);
+
+
+
+
+// import routes
+
+// import studentRouter from "./src/routes/student/student.route.js"
+// import jobApply from "./src/routes/jobApplication/jobApplication.route.js"
+// import jobRouter from './src/routes/admin/job.route.js';
+
+// //api
+// app.use('/api/user',userRoute);
+// app.use('/api/admin',jobRouter)
+
+// // routes declearation
+
+// app.use("/api/students",studentRouter);
+// app.use("/api/job", jobApply)
+
+
 
 
 const startServer = async () => {
