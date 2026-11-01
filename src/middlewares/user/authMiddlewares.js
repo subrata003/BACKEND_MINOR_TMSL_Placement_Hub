@@ -10,7 +10,7 @@ export const verifyToken =(req,res,next)=>{
    
   }
   try {
-   const decode=token.verify(token,process.env.SERECT_KEY )
+   const decode=jwt.verify(token,process.env.SERECT_KEY )
    req.user=decode;
    next();
    

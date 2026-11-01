@@ -1,6 +1,17 @@
-import express from "express";
-import cors from "cors";
-import { configDotenv } from "dotenv";
+
+import express from 'express';
+import cors from 'cors';
+import { configDotenv } from 'dotenv';
+import userRoute from './src/routes/user/user.route.js';
+import { connectDB } from './src/config/db.js';
+import jobRouter from './src/routes/admin/job.router.js';
+// import applicationRoutes from "./routes/admin/applicationRoutes.js";
+// import studentApplicationRoutes from "./routes/student/applicationRoutes.js";
+// import studentRoutes from "./routes/student/studentRoutes.js";
+import ApplyRouterAdmin from './src/routes/admin/applicationRoutes.js';
+import ApplyRouterStudent from './src/routes/student/applicationController.js';
+import studentDataRouter from './src/routes/student/studentRoutes.js';
+
 
 import userRoute from "./src/routes/user/user.route.js";
 import jobRouter from "./src/routes/admin/jobManagement/job.router.js";
@@ -28,14 +39,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/user", userRoute);
 app.use("/api/admin/job", jobRouter);
 
-app.get("/", (req, res) => {
-    res.send("Hello World");
-});
 
-// Start application
 const startServer = async () => {
     try {
         await connectDB();
+
+
+        //api
+        app.use('/api/user', userRoute);
+        app.use('/api/admin', jobRouter)
+        app.use("/api/admin/applications", ApplyRouterAdmin);
+        app.use("/api/student", ApplyRouterStudent);
+        app.use("/api/student", studentDataRouter);
+        app.get('/', (req, res) => {
+            res.send('Hello World');
+        })
+
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
